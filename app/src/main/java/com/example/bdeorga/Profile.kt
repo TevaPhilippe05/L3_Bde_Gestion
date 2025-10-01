@@ -48,7 +48,7 @@ fun CameraButton(modifier : Modifier, callback:(bitmap: ImageBitmap?)-> Unit){
         Icon(
             painter = painterResource(R.drawable.ic_photo),
             contentDescription = "Ouvre l'appareil photo",
-            tint = Color.White
+            tint = Color.Red
         )
     }
 }
