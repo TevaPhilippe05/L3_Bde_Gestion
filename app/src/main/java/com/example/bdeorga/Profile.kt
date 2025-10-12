@@ -4,8 +4,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -19,9 +22,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun UserImage(imageBitmap: ImageBitmap?) {
-    val contentDescription = "photo de profil"
+    val contentDescription = "Photo de profil"
     val modifier = Modifier
-        .fillMaxSize()
+        .size(120.dp)
+        .background(Color.LightGray, CircleShape)
         .padding(16.dp)
     if (imageBitmap == null) {
         Image(
@@ -48,7 +52,7 @@ fun CameraButton(modifier : Modifier, callback:(bitmap: ImageBitmap?)-> Unit){
         Icon(
             painter = painterResource(R.drawable.ic_photo),
             contentDescription = "Ouvre l'appareil photo",
-            tint = Color.Red
+            tint = Color.White
         )
     }
 }
