@@ -1,8 +1,18 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+
 
 android {
     namespace = "com.example.bdeorga"
@@ -16,6 +26,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+        val dataUrl = localProperties.getProperty("DATA_JSON_URL") ?: "https://api.jsonbin.io/v3/b/66718a9ee41b4d34e402c3c9"
+        //si ne trouve pas le lien utilise un lien vers un json vide
+        buildConfigField("String", "DATA_JSON_URL", "\"$dataUrl\"")
     }
 
     buildTypes {
@@ -36,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
