@@ -1,33 +1,54 @@
-package com.example.bdeorga
+package com.example.bdeorga.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.bdeorga.request.UserRequest
 import com.example.bdeorga.ui.theme.MyBdeOrgaTheme
+import td.info507.bdeorga.storage.UserStorage
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MyBdeOrgaTheme {
-                MainScreen()
+
+        val savedUser = UserStorage.load(this)
+        if (savedUser != null) {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            setContent {
+                MyBdeOrgaTheme {
+                    MainScreen()
+                }
             }
         }
     }
@@ -37,7 +58,6 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     val context = LocalContext.current
 
-    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var pseudo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -54,21 +74,6 @@ fun MainScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            UserImage(imageBitmap)
-
-            // Boutons photo
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val buttonModifier = Modifier
-                    .weight(1f)
-                    .background(color = Color(255, 187, 51), shape = CircleShape)
-
-                CameraButton(buttonModifier) { bitmap -> imageBitmap = bitmap }
-                GalleryButton(buttonModifier) { bitmap -> imageBitmap = bitmap }
-            }
 
             // Champ pseudo
             TextField(
@@ -91,21 +96,24 @@ fun MainScreen() {
 
             Button(
                 onClick = {
-                    if (pseudo.isNotBlank() and password.isNotBlank()) {
-                        val intent = Intent(context, ProfileActivity::class.java)
-                        context.startActivity(intent)
-                    } else if (pseudo.isBlank() and password.isBlank()) {
-                        Toast.makeText(context, "Veuillez entrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
-                    }  else if (pseudo.isBlank()) {
-                        Toast.makeText(context, "Veuillez entrer un pseudo", Toast.LENGTH_SHORT).show()
+                    if (pseudo.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "Veuillez remplir les champs", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Veuillez entrer un mot de passe", Toast.LENGTH_SHORT).show()
+                        val userRequest = UserRequest(context) { success, user ->
+                            if (success && user != null) {
+                                UserStorage.save(context, user)
+
+                                val intent = Intent(context, HomeActivity::class.java)
+                                context.startActivity(intent)
+                            } else {
+                                Toast.makeText(context, "Identifiants incorrect", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        userRequest.login(pseudo, password)
                     }
                 },
-
-                shape = CircleShape,
-
-                ) {
+                shape = CircleShape
+            ) {
                 Text("Connexion")
             }
         }
@@ -126,7 +134,7 @@ fun MainScreen() {
             )
         ) {
             Text(
-                text = "bdeOrga",
+                text = "BdeOrga",
                 color = Color.White
             )
         }

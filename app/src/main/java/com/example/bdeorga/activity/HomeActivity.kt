@@ -1,0 +1,99 @@
+package com.example.bdeorga.activity
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.bdeorga.screens.EvenementScreen
+import com.example.bdeorga.screens.ProfileScreen
+import com.example.bdeorga.screens.TacheScreen
+import com.example.bdeorga.ui.theme.MyBdeOrgaTheme
+
+class HomeActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            MyBdeOrgaTheme {
+                HomeNav()
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeNav() {
+    val navController = rememberNavController()
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    Scaffold(
+        bottomBar = {
+            BottomBar(navController, currentRoute)
+        }
+    ) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = "evenements",
+            modifier = Modifier.padding(padding)
+        ) {
+            composable("taches") { TacheScreen(navController) }
+            composable("evenements") { EvenementScreen(navController) }
+            composable("profil") { ProfileScreen(navController) }
+        }
+    }
+}
+
+@Composable
+fun BottomBar(navController: NavHostController, currentRoute: String?) {
+    NavigationBar(containerColor = Color.White) {
+        val items = listOf(
+            BottomItem("taches", Icons.Default.List, "Tâches"),
+            BottomItem("evenements", Icons.Default.Event, "Événements")
+
+        )
+
+        items.forEach { item ->
+            val selected = currentRoute == item.route
+            NavigationBarItem(
+                selected = selected,
+                onClick = { navController.navigate(item.route) },
+                icon = {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.label,
+                        tint = if (selected) Color.Black else Color.Gray
+                    )
+                },
+                label = {
+                    Text(item.label, color = if (selected) Color.Black else Color.Gray)
+                }
+            )
+        }
+    }
+}
+
+data class BottomItem(
+    val route: String,
+    val icon: ImageVector,
+    val label: String
+)
+
+

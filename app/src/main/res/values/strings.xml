@@ -3,4 +3,10 @@
     <string name="main_activity_profile">MainActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_card">CardActivity</string>
+    <string name="dialog_create_title">Création</string>
+    <string name="dialog_create_value">Value</string>
+    <string name="dialog_create_color">Color</string>
+    <string name="dialog_create_description">Description</string>
+    <string name="valider">Valider</string>
+    <string name="effacer">Effacer</string>
 </resources>
