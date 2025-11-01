@@ -17,6 +17,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -33,10 +34,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bdeorga.activity.MainActivity
+import com.example.bdeorga.activity.functions.tronquerText
 import com.example.bdeorga.model.Evenement
 import com.example.bdeorga.request.EventRequest
 import td.info507.bdeorga.storage.UserStorage
@@ -122,7 +126,8 @@ fun EvenementScreen(navController: NavHostController) {
             items(events.size) { i ->
                 val ev = events[i]
                 Column(modifier = Modifier.padding(8.dp)) {
-                    Text(ev.titre)
+                    Text(ev.titre, fontSize = TextUnit(MaterialTheme.typography.bodyMedium.fontSize.value + 6,TextUnitType.Sp))
+                    Text(tronquerText(ev.description, 50), fontSize = TextUnit(MaterialTheme.typography.bodyMedium.fontSize.value - 2,TextUnitType.Sp))
                     Text("${ev.date} à ${ev.heure}", color = Color.Gray)
                     Text(ev.lieu, color = Color.Gray)
                     Divider()

@@ -3,6 +3,7 @@ package com.example.bdeorga.screens
 import ProfileStorage
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.Size
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -33,12 +35,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bdeorga.activity.MainActivity
+import com.example.bdeorga.activity.functions.tronquerText
 import com.example.bdeorga.model.Evenement
-import com.example.bdeorga.request.EventRequest
+import com.example.bdeorga.request.TaskRequest
 import td.info507.bdeorga.storage.UserStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +61,7 @@ fun TacheScreen(navController: NavHostController) {
         val saved = ProfileStorage.getUri(context, user?.email)
         imageUri = saved?.let { Uri.parse(it) } ?: user?.profileImageUri?.let { Uri.parse(it) }
 
-        EventRequest(context) {
+        TaskRequest(context, user!!) { // Ici !! indique que user ne sera jamais nul
             events.clear()
             events.addAll(it)
         }.fetchEvents()
@@ -64,7 +70,7 @@ fun TacheScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Événements") },
+                title = { Text("Les tâches qui te concernent !") },
                 actions = {
                     Box {
                         IconButton(onClick = { expanded = true }) {
@@ -122,7 +128,8 @@ fun TacheScreen(navController: NavHostController) {
             items(events.size) { i ->
                 val ev = events[i]
                 Column(modifier = Modifier.padding(8.dp)) {
-                    Text(ev.titre)
+                    Text(ev.titre, fontSize = TextUnit(MaterialTheme.typography.bodyMedium.fontSize.value + 6,TextUnitType.Sp))
+                    Text(tronquerText(ev.description, 50), fontSize = TextUnit(MaterialTheme.typography.bodyMedium.fontSize.value - 2,TextUnitType.Sp))
                     Text("${ev.date} à ${ev.heure}", color = Color.Gray)
                     Text(ev.lieu, color = Color.Gray)
                     Divider()
@@ -131,3 +138,5 @@ fun TacheScreen(navController: NavHostController) {
         }
     }
 }
+
+
