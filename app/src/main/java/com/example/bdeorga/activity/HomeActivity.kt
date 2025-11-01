@@ -1,5 +1,6 @@
 package com.example.bdeorga.activity
 
+import com.example.bdeorga.screens.EventDetailScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -57,6 +58,11 @@ fun HomeNav() {
             composable("taches") { TacheScreen(navController) }
             composable("evenements") { EvenementScreen(navController) }
             composable("profil") { ProfileScreen(navController) }
+
+            composable("eventDetail/{eventId}") { backStackEntry ->
+                val eventId = backStackEntry.arguments?.getString("eventId")?.toIntOrNull()
+                EventDetailScreen(navController, eventId)
+            }
         }
     }
 }

@@ -5,13 +5,17 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -125,14 +129,35 @@ fun EvenementScreen(navController: NavHostController) {
         ) {
             items(events.size) { i ->
                 val ev = events[i]
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Text(ev.titre, fontSize = TextUnit(MaterialTheme.typography.bodyMedium.fontSize.value + 6,TextUnitType.Sp))
-                    Text(tronquerText(ev.description, 50), fontSize = TextUnit(MaterialTheme.typography.bodyMedium.fontSize.value - 2,TextUnitType.Sp))
-                    Text("${ev.date} à ${ev.heure}", color = Color.Gray)
-                    Text(ev.lieu, color = Color.Gray)
-                    Divider()
+
+                Card(
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate("eventDetail/${ev.id}")
+                        },
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF381719))
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(ev.titre,
+                            fontSize = TextUnit(
+                                MaterialTheme.typography.bodyMedium.fontSize.value + 6,
+                                TextUnitType.Sp)
+                        )
+                        Text(
+                            tronquerText(ev.description, 50),
+                            fontSize = TextUnit(
+                                MaterialTheme.typography.bodyMedium.fontSize.value - 2,
+                                TextUnitType.Sp
+                            )
+                        )
+                        Text("${ev.date} à ${ev.heure}", color = Color.Gray)
+                        Text(ev.lieu, color = Color.Gray)
+                    }
                 }
             }
         }
     }
 }
+
