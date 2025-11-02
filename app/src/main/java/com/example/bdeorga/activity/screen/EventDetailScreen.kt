@@ -23,6 +23,9 @@ import com.example.bdeorga.model.Evenement
 import com.example.bdeorga.model.User
 import com.example.bdeorga.request.EventRequest
 import com.example.bdeorga.request.MembersRequest
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +59,7 @@ fun EventDetailScreen(navController: NavHostController, eventId: Int?){
 
     Column(
         modifier = Modifier
+            .padding(WindowInsets.statusBars.asPaddingValues())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
 
