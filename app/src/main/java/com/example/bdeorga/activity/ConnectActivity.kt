@@ -80,7 +80,7 @@ fun MainScreen() {
                 value = pseudo,
                 onValueChange = { pseudo = it },
                 singleLine = true,
-                label = { Text("Pseudo") },
+                label = { Text("Mail") },
                 modifier = Modifier.fillMaxWidth()
             )
 
