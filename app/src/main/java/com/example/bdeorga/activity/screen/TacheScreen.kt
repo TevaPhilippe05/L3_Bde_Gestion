@@ -3,7 +3,6 @@ package com.example.bdeorga.screens
 import ProfileStorage
 import android.content.Intent
 import android.net.Uri
-import androidx.annotation.Size
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,15 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,7 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.bdeorga.activity.MainActivity
@@ -65,7 +62,7 @@ fun TacheScreen(navController: NavHostController) {
         val saved = ProfileStorage.getUri(context, user?.email)
         imageUri = saved?.let { Uri.parse(it) } ?: user?.profileImageUri?.let { Uri.parse(it) }
 
-        TaskRequest(context, user!!) { // Ici !! indique que user ne sera jamais nul
+        TaskRequest(context, user!!) { // user ne sera jamais nul
             events.clear()
             events.addAll(it)
         }.fetchEvents()
@@ -73,30 +70,44 @@ fun TacheScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Les tâches qui te concernent !") },
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "Mes tâches",
+                        fontWeight = FontWeight.Bold
+                    ) },
                 actions = {
                     Box {
-                        IconButton(onClick = { expanded = true }) {
-                            if (imageUri != null) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(imageUri),
-                                    contentDescription = "Profil",
-                                    modifier = Modifier.size(36.dp).clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Box(
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .clip(CircleShape)
-                                        .background(Color.LightGray),
-                                    contentAlignment = Alignment.Center
-                                ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .clickable { expanded = true }
+                                .padding(horizontal = 8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.LightGray),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (imageUri != null) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(imageUri),
+                                        contentDescription = "Photo de profil",
+                                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
                                     val initial = user?.email?.firstOrNull()?.uppercase() ?: "?"
-                                    Text(initial, color = Color.White)
+                                    Text(initial, color = Color.White, style = MaterialTheme.typography.titleMedium)
                                 }
                             }
+                            Text(
+                                text = user?.prenom ?: "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         }
 
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {

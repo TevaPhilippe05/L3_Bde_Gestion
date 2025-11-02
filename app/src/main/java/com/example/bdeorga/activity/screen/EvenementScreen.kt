@@ -16,15 +16,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -71,30 +70,44 @@ fun EvenementScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Événements") },
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "Évenements",
+                        fontWeight = FontWeight.Bold
+                    ) },
                 actions = {
                     Box {
-                        IconButton(onClick = { expanded = true }) {
-                            if (imageUri != null) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(imageUri),
-                                    contentDescription = "Profil",
-                                    modifier = Modifier.size(36.dp).clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Box(
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .clip(CircleShape)
-                                        .background(Color.LightGray),
-                                    contentAlignment = Alignment.Center
-                                ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .clickable { expanded = true } // Ouvre le menu au clic
+                                .padding(horizontal = 8.dp) // Ajoute un peu d'espace
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.LightGray),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (imageUri != null) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(imageUri),
+                                        contentDescription = "Photo de profil",
+                                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
                                     val initial = user?.email?.firstOrNull()?.uppercase() ?: "?"
-                                    Text(initial, color = Color.White)
+                                    Text(initial, color = Color.White, style = MaterialTheme.typography.titleMedium)
                                 }
                             }
+                            Text(
+                                text = user?.prenom ?: "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurface // Couleur du texte du thème
+                            )
                         }
 
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
