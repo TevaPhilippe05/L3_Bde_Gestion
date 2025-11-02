@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -53,7 +54,6 @@ fun HomeNav() {
         NavHost(
             navController = navController,
             startDestination = "evenements",
-            modifier = Modifier.padding(padding)
         ) {
             composable("taches") { TacheScreen(navController) }
             composable("evenements") { EvenementScreen(navController) }
@@ -69,7 +69,7 @@ fun HomeNav() {
 
 @Composable
 fun BottomBar(navController: NavHostController, currentRoute: String?) {
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
         val items = listOf(
             BottomItem("taches", Icons.Default.List, "Tâches"),
             BottomItem("evenements", Icons.Default.Event, "Événements")

@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -76,6 +77,9 @@ fun TacheScreen(navController: NavHostController) {
                         "Mes tâches",
                         fontWeight = FontWeight.Bold
                     ) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
                 actions = {
                     Box {
                         Column(
@@ -88,7 +92,7 @@ fun TacheScreen(navController: NavHostController) {
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(Color.LightGray),
+                                    .background(MaterialTheme.colorScheme.onSurfaceVariant),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (imageUri != null) {
@@ -149,7 +153,6 @@ fun TacheScreen(navController: NavHostController) {
                         .clickable {
                             navController.navigate("eventDetail/${ev.id}")
                         },
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF381719))
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(ev.titre,
@@ -164,8 +167,8 @@ fun TacheScreen(navController: NavHostController) {
                                 TextUnitType.Sp
                             )
                         )
-                        Text("${ev.date} à ${ev.heure}", color = Color.Gray)
-                        Text(ev.lieu, color = Color.Gray)
+                        Text("${ev.date} à ${ev.heure}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(ev.lieu, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
