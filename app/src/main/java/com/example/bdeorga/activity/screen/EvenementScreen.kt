@@ -48,6 +48,15 @@ import com.example.bdeorga.activity.functions.tronquerText
 import com.example.bdeorga.model.Evenement
 import com.example.bdeorga.request.EventRequest
 import td.info507.bdeorga.storage.UserStorage
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.os.Build
+import android.widget.Toast
+import com.example.bdeorga.notifications.NotificationReceiver
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -173,6 +182,69 @@ fun EvenementScreen(navController: NavHostController) {
                     }
                 }
             }
+        }
+    }
+}
+
+private fun scheduleNotifications(context: Context, events: List<Evenement>) {
+
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val now = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (!alarmManager.canScheduleExactAlarms()) {
+            Toast.makeText(context, "Permission d'alarme exacte requise", Toast.LENGTH_LONG).show()
+            // (On ne peut pas planifier si on n'a pas la permission)
+        }
+    }
+
+    events.forEach { event ->
+        try {
+            val eventDateTime = LocalDateTime.parse("${event.date} ${event.heure}", formatter)
+            val reminderDateTime = eventDateTime.minusDays(1) // Rappel 1 jour avant
+
+            // 1. Créer l'Intent (on le fait dans tous les cas)
+            val intent = Intent(context, NotificationReceiver::class.java).apply {
+                putExtra(NotificationReceiver.EVENT_TITLE_KEY, event.titre)
+                putExtra(NotificationReceiver.NOTIFICATION_ID_KEY, event.id)
+            }
+
+            // 2. Créer le PendingIntent
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                event.id,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            // --- NOUVELLE LOGIQUE ---
+
+            // Cas 1 : Le rappel est dans le futur
+            if (reminderDateTime.isAfter(now)) {
+                // On planifie l'alarme pour J-1
+                val triggerAtMillis = reminderDateTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    pendingIntent
+                )
+
+                // Cas 2 : Le rappel est dans le passé, MAIS l'événement lui-même est encore dans le futur
+            } else if (eventDateTime.isAfter(now)) {
+                // On envoie la notification MAINTENANT (ou presque)
+                // On programme l'alarme pour dans 1 seconde
+                val triggerAtMillis = System.currentTimeMillis() + 1000
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    pendingIntent
+                )
+            }
+            // Cas 3 : L'événement est déjà passé (eventDateTime.isBefore(now)). On ne fait rien.
+
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
