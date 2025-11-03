@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -57,6 +56,7 @@ import com.example.bdeorga.notifications.NotificationReceiver
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import android.provider.Settings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,9 +72,10 @@ fun EvenementScreen(navController: NavHostController) {
         val saved = ProfileStorage.getUri(context, user?.email)
         imageUri = saved?.let { Uri.parse(it) } ?: user?.profileImageUri?.let { Uri.parse(it) }
 
-        EventRequest(context) {
+        EventRequest(context) { fetchedEvents ->
             events.clear()
-            events.addAll(it)
+            events.addAll(fetchedEvents)
+            scheduleNotifications(context, fetchedEvents)
         }.fetchEvents()
     }
 
@@ -189,14 +190,24 @@ fun EvenementScreen(navController: NavHostController) {
 private fun scheduleNotifications(context: Context, events: List<Evenement>) {
 
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    val now = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if (!alarmManager.canScheduleExactAlarms()) {
-            Toast.makeText(context, "Permission d'alarme exacte requise", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Permission d'alarme requise pour les rappels", Toast.LENGTH_LONG).show()
+
+            Intent(
+                Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                Uri.parse("package:${context.packageName}")
+            ).also {
+                // Il faut démarrer cette activité depuis le contexte
+                context.startActivity(it)
+            }
+            return
         }
     }
+
+    val now = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     events.forEach { event ->
         try {
@@ -208,7 +219,6 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
                 putExtra(NotificationReceiver.NOTIFICATION_ID_KEY, event.id)
             }
 
-            // 2. Créer le PendingIntent
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
                 event.id,
@@ -216,11 +226,8 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            // --- NOUVELLE LOGIQUE ---
-
-            // Cas 1 : Le rappel est dans le futur
             if (reminderDateTime.isAfter(now)) {
-                // On planifie l'alarme pour J-1
+                // Cas 1 : Le rappel est dans le futur
                 val triggerAtMillis = reminderDateTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
                 alarmManager.setExact(
                     AlarmManager.RTC_WAKEUP,
@@ -228,18 +235,16 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
                     pendingIntent
                 )
 
-                // Cas 2 : Le rappel est dans le passé, MAIS l'événement lui-même est encore dans le futur
             } else if (eventDateTime.isAfter(now)) {
-                // On envoie la notification MAINTENANT (ou presque)
-                // On programme l'alarme pour dans 1 seconde
-                val triggerAtMillis = System.currentTimeMillis() + 1000
+                // Cas 2 : Le rappel est passé, mais l'événement est à venir
+                val triggerAtMillis = System.currentTimeMillis() + 1000 // 1 seconde
                 alarmManager.setExact(
                     AlarmManager.RTC_WAKEUP,
                     triggerAtMillis,
                     pendingIntent
                 )
             }
-            // Cas 3 : L'événement est déjà passé (eventDateTime.isBefore(now)). On ne fait rien.
+            // Cas 3 : L'événement est passé (on ne fait rien)
 
         } catch (e: Exception) {
             e.printStackTrace()
