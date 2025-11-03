@@ -57,6 +57,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.provider.Settings
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -197,7 +198,7 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
 
             Intent(
                 Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                Uri.parse("package:${context.packageName}")
+                "package:${context.packageName}".toUri()
             ).also {
                 // Il faut démarrer cette activité depuis le contexte
                 context.startActivity(it)
@@ -227,7 +228,7 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
             )
 
             if (reminderDateTime.isAfter(now)) {
-                // Cas 1 : Le rappel est dans le futur
+                // si e rappel est dans le futur
                 val triggerAtMillis = reminderDateTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
                 alarmManager.setExact(
                     AlarmManager.RTC_WAKEUP,
@@ -236,7 +237,7 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
                 )
 
             } else if (eventDateTime.isAfter(now)) {
-                // Cas 2 : Le rappel est passé, mais l'événement est à venir
+                // si le rappel est passé, mais l'événement est à venir
                 val triggerAtMillis = System.currentTimeMillis() + 1000 // 1 seconde
                 alarmManager.setExact(
                     AlarmManager.RTC_WAKEUP,
@@ -244,7 +245,7 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
                     pendingIntent
                 )
             }
-            // Cas 3 : L'événement est passé (on ne fait rien)
+            // si l'événement est passé (on ne fait rien)
 
         } catch (e: Exception) {
             e.printStackTrace()
