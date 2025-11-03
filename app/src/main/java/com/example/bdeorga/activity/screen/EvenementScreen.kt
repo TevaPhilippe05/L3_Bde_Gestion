@@ -195,7 +195,6 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if (!alarmManager.canScheduleExactAlarms()) {
             Toast.makeText(context, "Permission d'alarme exacte requise", Toast.LENGTH_LONG).show()
-            // (On ne peut pas planifier si on n'a pas la permission)
         }
     }
 
@@ -204,7 +203,6 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
             val eventDateTime = LocalDateTime.parse("${event.date} ${event.heure}", formatter)
             val reminderDateTime = eventDateTime.minusDays(1) // Rappel 1 jour avant
 
-            // 1. Créer l'Intent (on le fait dans tous les cas)
             val intent = Intent(context, NotificationReceiver::class.java).apply {
                 putExtra(NotificationReceiver.EVENT_TITLE_KEY, event.titre)
                 putExtra(NotificationReceiver.NOTIFICATION_ID_KEY, event.id)

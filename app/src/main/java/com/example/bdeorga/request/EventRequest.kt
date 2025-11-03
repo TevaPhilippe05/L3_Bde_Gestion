@@ -17,7 +17,6 @@ class EventRequest(private val context: Context, private val onComplete: (List<E
             { response ->
                 val events = parseEvents(response)
                 onComplete(events)
-                Toast.makeText(context, "Événements chargés", Toast.LENGTH_SHORT).show()
             },
             { error ->
                 error.printStackTrace()

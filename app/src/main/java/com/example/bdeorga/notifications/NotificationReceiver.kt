@@ -16,11 +16,9 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Récupérer les données de l'alarme
         val eventTitle = intent.getStringExtra(EVENT_TITLE_KEY) ?: "Événement"
         val notificationId = intent.getIntExtra(NOTIFICATION_ID_KEY, 0)
 
-        // Afficher la notification
         showNotification(context, eventTitle, notificationId)
     }
 
@@ -29,11 +27,10 @@ class NotificationReceiver : BroadcastReceiver() {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val title = "Rappel: $eventTitle"
-        val text = "Votre événement commence dans 1 jour !"
+        val text = "Votre événement commence bientôt !"
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            // !! IMPORTANT !! Remplacez ic_mail par une vraie icône de notification
-            .setSmallIcon(R.drawable.ic_mail)
+            .setSmallIcon(R.drawable.ic_notif_background)
             .setContentTitle(title)
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

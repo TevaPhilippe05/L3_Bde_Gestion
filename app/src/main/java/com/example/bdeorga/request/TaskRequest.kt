@@ -18,7 +18,6 @@ class TaskRequest(private val context: Context, private val user: User, private 
             { response ->
                 val events = parseEvents(response)
                 onComplete(events)
-                Toast.makeText(context, "Taches chargés", Toast.LENGTH_SHORT).show()
             },
             { error ->
                 error.printStackTrace()

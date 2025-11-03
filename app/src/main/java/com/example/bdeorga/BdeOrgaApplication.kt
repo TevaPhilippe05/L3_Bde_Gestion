@@ -18,9 +18,8 @@ class BdeOrgaApplication : Application() {
             val descriptionText = "Notifications pour les événements à venir"
             val importance = NotificationManager.IMPORTANCE_HIGH
 
-            // MODIFICATION : Utiliser le NOUVEAU Channel ID
             val channel = NotificationChannel(
-                NotificationReceiver.Companion.CHANNEL_ID,
+                NotificationReceiver.CHANNEL_ID,
                 name,
                 importance
             ).apply {

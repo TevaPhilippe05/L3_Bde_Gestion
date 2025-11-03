@@ -21,7 +21,6 @@ class UserRequest(private val context: Context, private val onComplete: (Boolean
                 val user = checkCredentials(response, email, password)
                 if (user != null) {
                     onComplete(true, user)
-                    Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
                 } else {
                     onComplete(false, null)
                     Toast.makeText(context, "Identifiants incorrects", Toast.LENGTH_SHORT).show()
