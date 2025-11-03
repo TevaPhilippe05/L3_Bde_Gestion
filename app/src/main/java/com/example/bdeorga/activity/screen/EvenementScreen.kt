@@ -1,4 +1,4 @@
-package com.example.bdeorga.screens
+package com.example.bdeorga.activity.screen
 
 import ProfileStorage
 import android.content.Intent
@@ -57,6 +57,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.provider.Settings
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +72,7 @@ fun EvenementScreen(navController: NavHostController) {
     // Récupération persistante
     LaunchedEffect(Unit) {
         val saved = ProfileStorage.getUri(context, user?.email)
-        imageUri = saved?.let { Uri.parse(it) } ?: user?.profileImageUri?.let { Uri.parse(it) }
+        imageUri = saved?.toUri() ?: user?.profileImageUri?.toUri()
 
         EventRequest(context) { fetchedEvents ->
             events.clear()
@@ -110,7 +111,9 @@ fun EvenementScreen(navController: NavHostController) {
                                     Image(
                                         painter = rememberAsyncImagePainter(imageUri),
                                         contentDescription = "Photo de profil",
-                                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape),
                                         contentScale = ContentScale.Crop
                                     )
                                 } else {
@@ -153,7 +156,8 @@ fun EvenementScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(8.dp)
+                .padding(8.dp),
+            contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             items(events.size) { i ->
                 val ev = events[i]
