@@ -1,13 +1,13 @@
 package com.example.bdeorga.activity
 
-import com.example.bdeorga.screens.EventDetailScreen
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,8 +23,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bdeorga.activity.screen.EvenementScreen
-import com.example.bdeorga.screens.ProfileScreen
-import com.example.bdeorga.screens.TacheScreen
+import com.example.bdeorga.screens.EventDetailScreen
+import com.example.bdeorga.activity.screen.TacheScreen
 import com.example.bdeorga.ui.theme.MyBdeOrgaTheme
 
 class HomeActivity : ComponentActivity() {
@@ -39,6 +39,7 @@ class HomeActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeNav() {
     val navController = rememberNavController()
@@ -48,14 +49,14 @@ fun HomeNav() {
         bottomBar = {
             BottomBar(navController, currentRoute)
         }
-    ) { padding ->
+    ) {
         NavHost(
             navController = navController,
             startDestination = "evenements",
         ) {
             composable("taches") { TacheScreen(navController) }
             composable("evenements") { EvenementScreen(navController) }
-            composable("profil") { ProfileScreen(navController) }
+            composable("profil") { ProfileScreen() }
 
             composable("eventDetail/{eventId}") { backStackEntry ->
                 val eventId = backStackEntry.arguments?.getString("eventId")?.toIntOrNull()
@@ -69,7 +70,7 @@ fun HomeNav() {
 fun BottomBar(navController: NavHostController, currentRoute: String?) {
     NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
         val items = listOf(
-            BottomItem("taches", Icons.Default.List, "Tâches"),
+            BottomItem("taches", Icons.AutoMirrored.Filled.List, "Tâches"),
             BottomItem("evenements", Icons.Default.Event, "Événements")
 
         )

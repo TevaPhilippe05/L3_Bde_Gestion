@@ -1,4 +1,4 @@
-package com.example.bdeorga.screens
+package com.example.bdeorga.activity
 
 import ProfileStorage
 import android.content.Context
@@ -41,19 +41,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.bdeorga.activity.MainActivity
 import td.info507.bdeorga.storage.UserStorage
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: androidx.navigation.NavHostController) {
+fun ProfileScreen() {
     val context = LocalContext.current
     val user = UserStorage.get()
     var imageUri by remember {
-        mutableStateOf(ProfileStorage.getUri(context, user?.email)?.let { Uri.parse(it) })
+        mutableStateOf(ProfileStorage.getUri(context, user?.email)?.toUri())
     }
 
     val galleryLauncher = rememberLauncherForActivityResult(

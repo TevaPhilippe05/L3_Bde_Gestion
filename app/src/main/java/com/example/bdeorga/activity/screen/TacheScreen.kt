@@ -1,4 +1,4 @@
-package com.example.bdeorga.screens
+package com.example.bdeorga.activity.screen
 
 import ProfileStorage
 import android.content.Intent
@@ -15,16 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,7 @@ import com.example.bdeorga.activity.functions.tronquerText
 import com.example.bdeorga.model.Evenement
 import com.example.bdeorga.request.TaskRequest
 import td.info507.bdeorga.storage.UserStorage
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +61,7 @@ fun TacheScreen(navController: NavHostController) {
     // Récupération persistante
     LaunchedEffect(Unit) {
         val saved = ProfileStorage.getUri(context, user?.email)
-        imageUri = saved?.let { Uri.parse(it) } ?: user?.profileImageUri?.let { Uri.parse(it) }
+        imageUri = saved?.toUri() ?: user?.profileImageUri?.toUri()
 
         TaskRequest(context, user!!) { // user ne sera jamais nul
             events.clear()
