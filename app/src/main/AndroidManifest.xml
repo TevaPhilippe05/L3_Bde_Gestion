@@ -18,6 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyBdeOrgaTheme">
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification_icon" />
+
         <receiver android:name=".notifications.NotificationReceiver" android:enabled="true" />
 
         <activity
