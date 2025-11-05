@@ -242,7 +242,7 @@ private fun scheduleNotifications(context: Context, events: List<Evenement>) {
 
             } else if (eventDateTime.isAfter(now)) {
                 // si le rappel est passé, mais l'événement est à venir
-                val triggerAtMillis = System.currentTimeMillis() + 1000 // 1 seconde
+                val triggerAtMillis = System.currentTimeMillis() + 1000 // 1s
                 alarmManager.setExact(
                     AlarmManager.RTC_WAKEUP,
                     triggerAtMillis,

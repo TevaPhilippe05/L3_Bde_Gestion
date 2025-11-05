@@ -30,7 +30,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val text = "Votre événement commence bientôt !"
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notif_background)
+            .setSmallIcon(R.drawable.ic_notification_icon)
             .setContentTitle(title)
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
